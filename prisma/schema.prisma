@@ -1,0 +1,143 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Speaker {
+  id                    String   @id @default(cuid())
+  name                  String
+  role                  String
+  avatar                String?
+  baselineWpm           Float    @default(135)
+  baselineFillerDensity Float    @default(2.5)
+  baselinePauseDuration Float    @default(1.1)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  speeches              Speech[]
+}
+
+model Speech {
+  id               String           @id @default(cuid())
+  title            String
+  category         String
+  speakerId        String?
+  speaker          Speaker?         @relation(fields: [speakerId], references: [id], onDelete: SetNull)
+  audioUrl         String?
+  durationSeconds  Float
+  wordCount        Int
+  wpm              Float
+  fillerCount      Int
+  fillerDensity    Float
+  pauseCount       Int
+  avgPauseDuration Float
+  longestPause     Float
+  silenceRatio     Float
+  paceVariation    Float
+  overallScore     Float
+  isIdeal          Boolean          @default(false)
+  isFlawed         Boolean          @default(false)
+  transcript       String
+  transcriptJson   String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  analysis         Analysis?
+  rubricScores     RubricScore[]
+  temporalEvents   TemporalEvent[]
+  recommendations  Recommendation[]
+  datasetExample   DatasetExample?
+}
+
+model Analysis {
+  id                    String   @id @default(cuid())
+  speechId              String   @unique
+  speech                Speech   @relation(fields: [speechId], references: [id], onDelete: Cascade)
+  executiveSummary      String
+  deliveryScore         Float
+  clarityScore          Float
+  structureScore        Float
+  contentScore          Float
+  fluencyScore          Float
+  engagementScore       Float
+  linguisticMetricsJson String
+  structuralOutlineJson String
+  contrastiveNotesJson  String
+  practicePlanJson      String
+  createdAt             DateTime @default(now())
+}
+
+model RubricScore {
+  id             String   @id @default(cuid())
+  speechId       String
+  speech         Speech   @relation(fields: [speechId], references: [id], onDelete: Cascade)
+  category       String
+  score          Float
+  weight         Float
+  evidence       String
+  issueDetected  String?
+  explanation    String
+  recommendation String
+  createdAt      DateTime @default(now())
+}
+
+model TemporalEvent {
+  id             String   @id @default(cuid())
+  speechId       String
+  speech         Speech   @relation(fields: [speechId], references: [id], onDelete: Cascade)
+  eventType      String
+  severity       String   @default("info")
+  startTimestamp Float
+  endTimestamp   Float
+  label          String
+  description    String
+  evidence       String
+  recommendation String
+  metricValue    Float?
+  metricUnit     String?
+  createdAt      DateTime @default(now())
+}
+
+model Recommendation {
+  id              String   @id @default(cuid())
+  speechId        String
+  speech          Speech   @relation(fields: [speechId], references: [id], onDelete: Cascade)
+  title           String
+  category        String
+  priority        String   @default("medium")
+  description     String
+  actionableDrill String
+  targetTimestamp Float?
+  createdAt       DateTime @default(now())
+}
+
+model DatasetExample {
+  id                      String   @id @default(cuid())
+  speechId                String?  @unique
+  speech                  Speech?  @relation(fields: [speechId], references: [id], onDelete: SetNull)
+  pairId                  String
+  category                String
+  idealOrFlawed           String
+  title                   String
+  targetFlaws             String
+  expectedCharacteristics String
+  durationSeconds         Float
+  rubricScoresSummary     String
+  timestampAnnotations   String
+  createdAt               DateTime @default(now())
+}
+
+model SystemSetting {
+  id               String   @id @default("global")
+  demoMode         Boolean  @default(true)
+  weightDelivery   Float    @default(0.20)
+  weightClarity    Float    @default(0.20)
+  weightStructure  Float    @default(0.20)
+  weightContent    Float    @default(0.15)
+  weightFluency    Float    @default(0.15)
+  weightEngagement Float    @default(0.10)
+  autoSyncAudio    Boolean  @default(true)
+  updatedAt        DateTime @updatedAt
+}

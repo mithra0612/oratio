@@ -21,15 +21,20 @@ import {
 export const dynamic = "force-dynamic";
 
 export default async function OverviewPage() {
-  const speeches = await prisma.speech.findMany({
-    include: {
-      speaker: true,
-      rubricScores: true,
-      temporalEvents: true,
-      recommendations: true,
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  let speeches: any[] = [];
+  try {
+    speeches = await prisma.speech.findMany({
+      include: {
+        speaker: true,
+        rubricScores: true,
+        temporalEvents: true,
+        recommendations: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (err) {
+    console.error("Failed to load speeches in OverviewPage:", err);
+  }
 
   const totalSpeeches = speeches.length;
   const avgScore =

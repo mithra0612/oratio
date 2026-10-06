@@ -10,19 +10,24 @@ export default async function SpeechPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const speech = await prisma.speech.findUnique({
-    where: { id },
-    include: {
-      speaker: true,
-      analysis: true,
-      rubricScores: true,
-      temporalEvents: {
-        orderBy: { startTimestamp: "asc" },
+  let speech = null;
+  try {
+    speech = await prisma.speech.findUnique({
+      where: { id },
+      include: {
+        speaker: true,
+        analysis: true,
+        rubricScores: true,
+        temporalEvents: {
+          orderBy: { startTimestamp: "asc" },
+        },
+        recommendations: true,
+        datasetExample: true,
       },
-      recommendations: true,
-      datasetExample: true,
-    },
-  });
+    });
+  } catch (err) {
+    console.error(`Failed to fetch speech ${id}:`, err);
+  }
 
   if (!speech) {
     notFound();

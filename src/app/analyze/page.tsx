@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Mic,
@@ -43,7 +43,7 @@ const STAGES = [
   "Generating actionable coaching drills",
 ];
 
-export default function AnalyzePage() {
+function AnalyzeStudioContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -835,3 +835,19 @@ export default function AnalyzePage() {
     </div>
   );
 }
+
+export default function AnalyzePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-4xl mx-auto p-12 text-center font-mono-code text-xs text-[#64748b] flex flex-col items-center justify-center gap-3">
+          <Loader2 className="w-5 h-5 text-[#f59e0b] animate-spin" />
+          <span>Loading Voice Intelligence Studio...</span>
+        </div>
+      }
+    >
+      <AnalyzeStudioContent />
+    </Suspense>
+  );
+}
+

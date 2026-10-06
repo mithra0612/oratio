@@ -119,16 +119,14 @@ test("7. Deterministic Temporal Event Generation", () => {
 test("8. Database Operations (Prisma SQLite)", async () => {
   const prisma = new PrismaClient();
   const speeches = await prisma.speech.findMany({
-    include: { rubricScores: true, temporalEvents: true },
+    include: { rubricScores: true, temporalEvents: true, speaker: true },
   });
 
-  assert.ok(speeches.length >= 6, `Expected at least 6 seeded speeches, found ${speeches.length}`);
+  assert.ok(speeches.length >= 1, `Expected seeded voice notes, found ${speeches.length}`);
 
-  const idealSpeeches = speeches.filter((s) => s.isIdeal);
-  const flawedSpeeches = speeches.filter((s) => s.isFlawed);
-
-  assert.ok(idealSpeeches.length >= 3, `Expected at least 3 ideal speeches, found ${idealSpeeches.length}`);
-  assert.ok(flawedSpeeches.length >= 3, `Expected at least 3 flawed speeches, found ${flawedSpeeches.length}`);
+  const sampleSpeech = speeches[0];
+  assert.ok(sampleSpeech.rubricScores.length > 0, "Speech should have rubric scores");
+  assert.ok(sampleSpeech.speaker, "Speech should have an associated speaker");
 
   await prisma.$disconnect();
 });

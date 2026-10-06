@@ -16,7 +16,6 @@ import {
   AlertOctagon,
   Clock,
   Sparkles,
-  GitCompare,
   FileSpreadsheet,
   BrainCircuit,
   AlertCircle,
@@ -43,17 +42,17 @@ export function SpeechDetailClient({ speech }: SpeechDetailClientProps) {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
-      {/* Top Speech Identity Banner */}
-      <div className="bg-[#101520] border border-[#1e2638] rounded p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      {/* Top Speech Identity Banner (NO CARD BORDERS) */}
+      <div className="bg-[#101520] rounded-2xl p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-xl">
         <div className="space-y-2">
           <div className="flex items-center gap-2.5">
             {speech.isIdeal ? (
-              <span className="text-[10px] font-mono-code px-2 py-0.5 rounded bg-[#10b981]/20 text-[#10b981] border border-[#10b981]/40 font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> IDEAL ARCHETYPE
+              <span className="text-[10px] font-mono-code px-2.5 py-0.5 rounded-full bg-[#10b981]/20 text-[#10b981] font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3" /> BALANCED CADENCE
               </span>
             ) : (
-              <span className="text-[10px] font-mono-code px-2 py-0.5 rounded bg-[#ef4444]/20 text-[#ef4444] border border-[#ef4444]/40 font-bold flex items-center gap-1">
-                <AlertOctagon className="w-3 h-3" /> FLAWED ARCHETYPE
+              <span className="text-[10px] font-mono-code px-2.5 py-0.5 rounded-full bg-[#ef4444]/20 text-[#ef4444] font-bold flex items-center gap-1">
+                <AlertOctagon className="w-3 h-3" /> FLAGGED FLAWS
               </span>
             )}
             <span className="text-xs font-mono-code text-[#64748b]">
@@ -66,7 +65,7 @@ export function SpeechDetailClient({ speech }: SpeechDetailClientProps) {
           </h2>
 
           <div className="flex flex-wrap items-center gap-4 text-xs font-mono-code text-[#94a3b8]">
-            <span>Speaker: {speech.speaker?.name || "Dr. Elena Vance"}</span>
+            <span>Speaker: {speech.speaker?.name || "You"}</span>
             <span>•</span>
             <span>Duration: {Math.round(speech.durationSeconds)}s</span>
             <span>•</span>
@@ -77,7 +76,7 @@ export function SpeechDetailClient({ speech }: SpeechDetailClientProps) {
         </div>
 
         {/* Global Scorecard Callout */}
-        <div className="flex items-center gap-4 border-t lg:border-t-0 lg:border-l border-[#1e2638] pt-4 lg:pt-0 lg:pl-8">
+        <div className="flex items-center gap-6 border-t lg:border-t-0 lg:border-l border-[#182030] pt-4 lg:pt-0 lg:pl-8">
           <div className="text-center">
             <span className="text-[10px] font-mono-code text-[#64748b] uppercase tracking-wider block">
               Composite Rubric Score
@@ -94,16 +93,16 @@ export function SpeechDetailClient({ speech }: SpeechDetailClientProps) {
 
           <div className="flex flex-col gap-2">
             <Link
-              href="/contrastive-lab"
-              className="text-xs font-mono-code px-3 py-1.5 rounded bg-[#182030] text-[#f1f5f9] hover:bg-[#232c40] border border-[#232c40] transition-colors flex items-center gap-1.5"
+              href="/ai-coach"
+              className="text-xs font-mono-code px-3.5 py-2 rounded-xl bg-[#182030] text-[#f1f5f9] hover:bg-[#232c40] transition-colors flex items-center gap-2 shadow-sm"
             >
-              <GitCompare className="w-3.5 h-3.5 text-[#f59e0b]" />
-              <span>Contrastive Lab</span>
+              <BrainCircuit className="w-3.5 h-3.5 text-[#f59e0b]" />
+              <span>Ask AI Coach</span>
             </Link>
 
             <Link
               href={`/reports/${speech.id}`}
-              className="text-xs font-mono-code px-3 py-1.5 rounded bg-[#182030] text-[#f1f5f9] hover:bg-[#232c40] border border-[#232c40] transition-colors flex items-center gap-1.5"
+              className="text-xs font-mono-code px-3.5 py-2 rounded-xl bg-[#182030] text-[#f1f5f9] hover:bg-[#232c40] transition-colors flex items-center gap-2 shadow-sm"
             >
               <FileSpreadsheet className="w-3.5 h-3.5 text-[#38bdf8]" />
               <span>Generate Report</span>
@@ -183,14 +182,14 @@ export function SpeechDetailClient({ speech }: SpeechDetailClientProps) {
             {speech.rubricScores.map((rubric) => (
               <div
                 key={rubric.id}
-                className="p-4 rounded bg-[#101520] border border-[#1e2638] space-y-2.5 hover:border-[#2d374d] transition-colors"
+                className="p-4 rounded-2xl bg-[#101520] space-y-2.5 shadow-md"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="font-editorial text-base font-bold text-[#f1f5f9]">
                       {rubric.category}
                     </span>
-                    <span className="text-[10px] font-mono-code px-1.5 py-0.5 rounded bg-[#182030] text-[#64748b]">
+                    <span className="text-[10px] font-mono-code px-2 py-0.5 rounded bg-[#182030] text-[#64748b]">
                       Weight: {Math.round(rubric.weight * 100)}%
                     </span>
                   </div>
@@ -227,7 +226,7 @@ export function SpeechDetailClient({ speech }: SpeechDetailClientProps) {
 
                 {/* Detected Issue if present */}
                 {rubric.issueDetected && (
-                  <div className="text-xs space-y-1 p-2 rounded bg-[#ef4444]/10 border border-[#ef4444]/20 text-[#ef4444]">
+                  <div className="text-xs space-y-1 p-2.5 rounded-xl bg-[#ef4444]/10 text-[#ef4444]">
                     <span className="text-[10px] font-mono-code uppercase tracking-wider font-bold block flex items-center gap-1">
                       <AlertCircle className="w-3 h-3" /> Issue Detected:
                     </span>
@@ -236,7 +235,7 @@ export function SpeechDetailClient({ speech }: SpeechDetailClientProps) {
                 )}
 
                 {/* Actionable Recommendation */}
-                <div className="text-xs space-y-1 p-2 rounded bg-[#0c1017] border border-[#1e2638]">
+                <div className="text-xs space-y-1 p-3 rounded-xl bg-[#0c1017]">
                   <span className="text-[10px] font-mono-code text-[#f59e0b] uppercase tracking-wider font-bold block">
                     Actionable Recommendation:
                   </span>
@@ -248,10 +247,10 @@ export function SpeechDetailClient({ speech }: SpeechDetailClientProps) {
         </div>
       </section>
 
-      {/* Structural & Linguistic Analysis Deep Dive */}
+      {/* Structural & Linguistic Analysis Deep Dive (NO CARD BORDERS) */}
       {speech.analysis && (
-        <section className="bg-[#101520] border border-[#1e2638] rounded p-6 space-y-6">
-          <div className="border-b border-[#1e2638] pb-4">
+        <section className="bg-[#101520] rounded-2xl p-6 md:p-8 space-y-6 shadow-xl">
+          <div className="border-b border-[#182030] pb-4">
             <span className="text-[10px] font-mono-code text-[#64748b] uppercase tracking-wider block">
               Linguistic Structure & Rhetorical Architecture
             </span>
@@ -271,7 +270,7 @@ export function SpeechDetailClient({ speech }: SpeechDetailClientProps) {
               </span>
               <div className="grid grid-cols-2 gap-3">
                 {Object.entries(speech.analysis.linguisticMetrics).map(([k, v]) => (
-                  <div key={k} className="p-2.5 rounded bg-[#0c1017] border border-[#1e2638]">
+                  <div key={k} className="p-3 rounded-xl bg-[#0c1017]">
                     <span className="text-[10px] text-[#64748b] block capitalize">
                       {k.replace(/([A-Z])/g, " $1")}
                     </span>
@@ -290,7 +289,7 @@ export function SpeechDetailClient({ speech }: SpeechDetailClientProps) {
                 {speech.analysis.practicePlan.map((step) => (
                   <div
                     key={step.step}
-                    className="p-3 rounded bg-[#0c1017] border border-[#1e2638] space-y-1 font-sans"
+                    className="p-3.5 rounded-xl bg-[#0c1017] space-y-1 font-sans"
                   >
                     <div className="flex items-center justify-between font-mono-code text-xs">
                       <span className="text-[#f59e0b] font-semibold">

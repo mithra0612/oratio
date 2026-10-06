@@ -16,13 +16,31 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const {
-      title = "New Speech Analysis",
-      category = "Technical Presentation",
+      title = "Voice Note Analysis",
+      category = "Voice Note",
       transcript: rawTranscript,
       durationSeconds: reqDuration,
       audioUrl = "/samples/ideal-rag.wav",
-      speakerId,
+      speakerName = "You",
     } = body;
+
+    // Resolve or create speaker
+    let targetSpeakerId = body.speakerId;
+    if (!targetSpeakerId) {
+      const trimmedSpeaker = (speakerName || "You").trim();
+      let speaker = await prisma.speaker.findFirst({
+        where: { name: trimmedSpeaker },
+      });
+      if (!speaker) {
+        speaker = await prisma.speaker.create({
+          data: {
+            name: trimmedSpeaker,
+            role: trimmedSpeaker.toLowerCase() === "you" ? "Personal Voice Profile" : "Speaker Tag",
+          },
+        });
+      }
+      targetSpeakerId = speaker.id;
+    }
 
     // Use default sample speech if user didn't enter custom text
     const sampleText =
@@ -37,7 +55,7 @@ export async function POST(req: NextRequest) {
     const sentences = sampleText.match(/[^.!?]+[.!?]+(\s|$)/g) || [sampleText];
     const segmentDuration = durationSeconds / Math.max(1, sentences.length);
 
-    const segments: TranscriptSegment[] = sentences.map((sentence, idx) => {
+    const segments: TranscriptSegment[] = sentences.map((sentence: string, idx: number) => {
       const start = Math.round(idx * segmentDuration * 10) / 10;
       const end = Math.round((idx + 1) * segmentDuration * 10) / 10;
       const segWords = countWords(sentence);
@@ -124,7 +142,7 @@ export async function POST(req: NextRequest) {
         id: speechId,
         title,
         category,
-        speakerId: speakerId || null,
+        speakerId: targetSpeakerId || null,
         audioUrl,
         durationSeconds,
         wordCount,

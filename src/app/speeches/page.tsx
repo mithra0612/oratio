@@ -1,6 +1,17 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
-import { Library, CheckCircle2, AlertOctagon, ArrowRight, Mic, GitCompare } from "lucide-react";
+import {
+  AudioLines,
+  CheckCircle2,
+  AlertOctagon,
+  ArrowRight,
+  Mic,
+  Upload,
+  User,
+  Activity,
+  AlertCircle,
+  Sparkles,
+} from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -15,64 +26,108 @@ export default async function SpeechesPage() {
     orderBy: { createdAt: "desc" },
   });
 
+  const totalSpeeches = speeches.length;
+  const avgScore =
+    totalSpeeches > 0
+      ? Math.round((speeches.reduce((acc, s) => acc + s.overallScore, 0) / totalSpeeches) * 10) / 10
+      : 86.5;
+  const avgWpm =
+    totalSpeeches > 0
+      ? Math.round((speeches.reduce((acc, s) => acc + s.wpm, 0) / totalSpeeches) * 10) / 10
+      : 137.5;
+  const avgFiller =
+    totalSpeeches > 0
+      ? Math.round((speeches.reduce((acc, s) => acc + s.fillerDensity, 0) / totalSpeeches) * 10) / 10
+      : 1.2;
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#1e2638] pb-5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#182030] pb-5">
         <div>
           <span className="text-[10px] font-mono-code text-[#f59e0b] uppercase tracking-wider block">
-            Corpus Repository
+            Personal Repository
           </span>
           <h2 className="font-editorial text-2xl md:text-3xl font-bold text-[#f1f5f9] tracking-tight">
-            Speech Evaluation Library
+            Voice Vault & Delivery Library
           </h2>
           <p className="text-xs md:text-sm text-[#94a3b8] mt-1">
-            Browse evaluated speeches across categories with rubric scores, acoustic signals, and temporal flaw markers.
+            Review your recorded and uploaded voice notes, pacing trajectories, and temporal flaw telemetry.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <Link
-            href="/contrastive-lab"
-            className="px-3.5 py-2 rounded bg-[#182030] text-[#f1f5f9] text-xs font-semibold hover:bg-[#232c40] border border-[#232c40] transition-colors flex items-center gap-1.5"
+            href="/analyze?mode=upload"
+            className="px-4 py-2 rounded-xl bg-[#182030] text-[#f1f5f9] text-xs font-semibold hover:bg-[#232c40] transition-colors flex items-center gap-2 shadow-sm"
           >
-            <GitCompare className="w-3.5 h-3.5 text-[#f59e0b]" />
-            <span>Contrastive Lab</span>
+            <Upload className="w-3.5 h-3.5 text-[#f59e0b]" />
+            <span>Upload Audio</span>
           </Link>
 
           <Link
-            href="/analyze"
-            className="px-4 py-2 rounded bg-[#f59e0b] text-[#0a0d13] text-xs font-bold hover:bg-[#d97706] transition-colors flex items-center gap-2"
+            href="/analyze?mode=record"
+            className="px-4 py-2 rounded-xl bg-[#f59e0b] text-[#0a0d13] text-xs font-bold hover:bg-[#d97706] transition-colors flex items-center gap-2 shadow-md shadow-[#f59e0b]/20"
           >
             <Mic className="w-3.5 h-3.5" />
-            <span>Analyze New Speech</span>
+            <span>Record Live Note</span>
           </Link>
         </div>
       </div>
 
-      {/* Grid of Speeches */}
+      {/* Aggregate Stats Strip (NO CARD BORDERS) */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="p-5 rounded-2xl bg-[#101520] space-y-1 shadow-md">
+          <span className="text-[10px] font-mono-code text-[#64748b] uppercase">Total Voice Notes</span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="font-editorial text-2xl font-bold text-[#f1f5f9]">{totalSpeeches}</span>
+            <span className="text-xs font-mono-code text-[#64748b]">notes</span>
+          </div>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-[#101520] space-y-1 shadow-md">
+          <span className="text-[10px] font-mono-code text-[#64748b] uppercase">Average Cadence</span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="font-editorial text-2xl font-bold text-[#f1f5f9]">{avgWpm}</span>
+            <span className="text-xs font-mono-code text-[#f59e0b]">WPM</span>
+          </div>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-[#101520] space-y-1 shadow-md">
+          <span className="text-[10px] font-mono-code text-[#64748b] uppercase">Filler Density</span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="font-editorial text-2xl font-bold text-[#f1f5f9]">{avgFiller}%</span>
+            <span className="text-xs font-mono-code text-[#10b981]">avg</span>
+          </div>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-[#101520] space-y-1 shadow-md">
+          <span className="text-[10px] font-mono-code text-[#64748b] uppercase">Delivery Score</span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="font-editorial text-2xl font-bold text-[#10b981]">{avgScore}</span>
+            <span className="text-xs font-mono-code text-[#64748b]">/ 100</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Grid of Speeches (NO CARD BORDERS) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {speeches.map((sp) => {
-          const paceFlaws = sp.temporalEvents.filter((e) => e.eventType === "PACE_SPIKE").length;
-          const fillerFlaws = sp.temporalEvents.filter((e) => e.eventType === "FILLER_DETECTED").length;
-
           return (
             <div
               key={sp.id}
-              className={`p-5 rounded bg-[#101520] border transition-all flex flex-col justify-between space-y-4 hover:border-[#f59e0b]/40 ${
-                sp.isIdeal ? "border-[#10b981]/30" : "border-[#ef4444]/30"
-              }`}
+              className="p-6 rounded-2xl bg-[#101520] hover:bg-[#131b29] transition-all flex flex-col justify-between space-y-4 shadow-md group"
             >
               <div className="space-y-3">
                 {/* Badges */}
                 <div className="flex items-center justify-between">
                   {sp.isIdeal ? (
-                    <span className="text-[10px] font-mono-code px-2 py-0.5 rounded bg-[#10b981]/20 text-[#10b981] border border-[#10b981]/40 font-bold flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3" /> IDEAL
+                    <span className="text-[10px] font-mono-code px-2.5 py-0.5 rounded-full bg-[#10b981]/15 text-[#10b981] font-bold flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" /> BALANCED CADENCE
                     </span>
                   ) : (
-                    <span className="text-[10px] font-mono-code px-2 py-0.5 rounded bg-[#ef4444]/20 text-[#ef4444] border border-[#ef4444]/40 font-bold flex items-center gap-1">
-                      <AlertOctagon className="w-3 h-3" /> FLAWED
+                    <span className="text-[10px] font-mono-code px-2.5 py-0.5 rounded-full bg-[#ef4444]/15 text-[#ef4444] font-bold flex items-center gap-1">
+                      <AlertOctagon className="w-3 h-3" /> FLAGGED FLAWS
                     </span>
                   )}
 
@@ -89,21 +144,24 @@ export default async function SpeechesPage() {
                   >
                     {sp.title}
                   </Link>
-                  <p className="text-xs text-[#94a3b8] mt-1 font-mono-code">
-                    {sp.speaker?.name || "Dr. Elena Vance"} • {Math.round(sp.durationSeconds)}s
+                  <p className="text-xs text-[#94a3b8] mt-1 font-mono-code flex items-center gap-1.5">
+                    <User className="w-3 h-3 text-[#64748b]" />
+                    <span>{sp.speaker?.name || "You"}</span>
+                    <span>•</span>
+                    <span>{Math.round(sp.durationSeconds)}s</span>
                   </p>
                 </div>
 
                 {/* Transcript Snippet */}
                 <p className="text-xs text-[#94a3b8] line-clamp-2 italic leading-relaxed">
-                  "{sp.transcript}"
+                  &ldquo;{sp.transcript}&rdquo;
                 </p>
               </div>
 
-              {/* Metrics & Actions */}
-              <div className="pt-3 border-t border-[#1e2638] space-y-3">
+              {/* Metrics & Actions (NO CARD BORDERS) */}
+              <div className="pt-3 border-t border-[#182030] space-y-3">
                 <div className="grid grid-cols-3 gap-2 text-center font-mono-code">
-                  <div className="p-2 rounded bg-[#0c1017] border border-[#1a2233]">
+                  <div className="p-2.5 rounded-xl bg-[#0c1017]">
                     <span className="text-[9px] text-[#64748b] block uppercase">Score</span>
                     <span
                       className={`text-sm font-bold ${
@@ -114,12 +172,12 @@ export default async function SpeechesPage() {
                     </span>
                   </div>
 
-                  <div className="p-2 rounded bg-[#0c1017] border border-[#1a2233]">
+                  <div className="p-2.5 rounded-xl bg-[#0c1017]">
                     <span className="text-[9px] text-[#64748b] block uppercase">WPM</span>
                     <span className="text-sm font-semibold text-[#f1f5f9]">{sp.wpm}</span>
                   </div>
 
-                  <div className="p-2 rounded bg-[#0c1017] border border-[#1a2233]">
+                  <div className="p-2.5 rounded-xl bg-[#0c1017]">
                     <span className="text-[9px] text-[#64748b] block uppercase">Flaws</span>
                     <span className="text-sm font-semibold text-[#f59e0b]">
                       {sp.temporalEvents.length}
@@ -132,14 +190,14 @@ export default async function SpeechesPage() {
                     href={`/reports/${sp.id}`}
                     className="text-[11px] font-mono-code text-[#64748b] hover:text-[#f1f5f9] transition-colors"
                   >
-                    Report
+                    Export Dossier
                   </Link>
 
                   <Link
                     href={`/speeches/${sp.id}`}
-                    className="text-xs font-semibold px-3 py-1.5 rounded bg-[#182030] text-[#f1f5f9] hover:bg-[#232c40] border border-[#232c40] transition-colors flex items-center gap-1.5"
+                    className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-[#182030] text-[#f1f5f9] hover:bg-[#232c40] transition-colors flex items-center gap-1.5"
                   >
-                    <span>Inspect Evaluation</span>
+                    <span>Inspect Waveform</span>
                     <ArrowRight className="w-3.5 h-3.5 text-[#f59e0b]" />
                   </Link>
                 </div>

@@ -1,4 +1,6 @@
 export type SpeechCategory =
+  | "Voice Note"
+  | "Meeting Memo"
   | "Technical Presentation"
   | "Interview Answer"
   | "Business Pitch"
@@ -176,6 +178,7 @@ export interface SpeakerProfileData {
   averageScore: number;
   averageWpm: number;
   averageFillerDensity: number;
+  averagePauseDuration?: number;
   averageClarity: number;
   averageStructure: number;
   averageDelivery: number;

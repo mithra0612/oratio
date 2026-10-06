@@ -13,9 +13,9 @@ interface Message {
 
 const SUGGESTED_QUERIES = [
   "How can I improve before my next presentation?",
-  "What was my biggest weakness in the latest speech?",
+  "What was my biggest weakness in the latest voice note?",
   "Where did I speak too quickly?",
-  "How did my latest speech compare with my previous speech?",
+  "How did my latest speech compare with my baseline?",
   "What should I practice?",
   "Which flaw appears most frequently?",
 ];
@@ -32,9 +32,9 @@ export function AiCoachClient({ speeches }: AiCoachClientProps) {
     {
       id: "msg-welcome",
       sender: "coach",
-      text: `Welcome to the ORATOR Speech Intelligence Coach. I am grounded in your empirical speech analytics, acoustic time-series, and rubric evaluations.
+      text: `Welcome to the Oratio Speech Intelligence Coach. I am grounded in your recorded acoustic telemetry, speaking cadence, and delivery scores.
 
-Ask me about your pacing volatility, transition quality, timestamped flaw clusters, or longitudinal progress across sessions.`,
+Ask me about your pacing spikes, verbal filler words, dead air pauses, or practice drills.`,
       timestamp: "Just now",
     },
   ]);
@@ -92,7 +92,7 @@ Ask me about your pacing volatility, transition quality, timestamped flaw cluste
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#1e2638] pb-5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#182030] pb-5">
         <div>
           <span className="text-[10px] font-mono-code text-[#f59e0b] uppercase tracking-wider block">
             Grounded Intelligence
@@ -111,7 +111,7 @@ Ask me about your pacing volatility, transition quality, timestamped flaw cluste
           <select
             value={selectedSpeechId}
             onChange={(e) => setSelectedSpeechId(e.target.value)}
-            className="px-3 py-1.5 rounded bg-[#101520] border border-[#1e2638] text-xs font-mono-code text-[#f1f5f9] focus:outline-none focus:border-[#f59e0b]"
+            className="px-3.5 py-2 rounded-xl bg-[#101520] text-xs font-mono-code text-[#f1f5f9] focus:outline-none focus:ring-1 focus:ring-[#f59e0b] shadow-sm cursor-pointer"
           >
             {speeches.map((s) => (
               <option key={s.id} value={s.id}>
@@ -132,7 +132,7 @@ Ask me about your pacing volatility, transition quality, timestamped flaw cluste
             <button
               key={idx}
               onClick={() => handleSend(q)}
-              className="text-xs font-mono-code px-3 py-1.5 rounded bg-[#101520] hover:bg-[#182030] text-[#cbd5e1] hover:text-[#f59e0b] border border-[#1e2638] hover:border-[#f59e0b]/40 transition-colors text-left"
+              className="text-xs font-mono-code px-3.5 py-1.5 rounded-xl bg-[#101520] hover:bg-[#182030] text-[#cbd5e1] hover:text-[#f59e0b] transition-colors text-left cursor-pointer shadow-sm"
             >
               {q}
             </button>
@@ -140,10 +140,10 @@ Ask me about your pacing volatility, transition quality, timestamped flaw cluste
         </div>
       </div>
 
-      {/* Main Chat Container */}
-      <div className="bg-[#101520] border border-[#1e2638] rounded flex flex-col h-[520px]">
+      {/* Main Chat Container (NO CARD BORDERS) */}
+      <div className="bg-[#101520] rounded-2xl flex flex-col h-[520px] shadow-2xl overflow-hidden">
         {/* Messages Feed */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4">
+        <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -152,21 +152,21 @@ Ask me about your pacing volatility, transition quality, timestamped flaw cluste
               }`}
             >
               {msg.sender === "coach" && (
-                <div className="w-8 h-8 rounded bg-[#f59e0b]/10 border border-[#f59e0b]/30 flex items-center justify-center text-[#f59e0b] shrink-0">
+                <div className="w-8 h-8 rounded-full bg-[#f59e0b]/15 flex items-center justify-center text-[#f59e0b] shrink-0 shadow-sm">
                   <BrainCircuit className="w-4 h-4" />
                 </div>
               )}
 
               <div
-                className={`max-w-2xl p-4 rounded text-xs leading-relaxed ${
+                className={`max-w-2xl p-4 rounded-2xl text-xs leading-relaxed shadow-sm ${
                   msg.sender === "user"
-                    ? "bg-[#182133] text-[#f1f5f9] border border-[#2d374d]"
-                    : "bg-[#0c1017] text-[#cbd5e1] border border-[#1e2638] whitespace-pre-wrap"
+                    ? "bg-[#182133] text-[#f1f5f9]"
+                    : "bg-[#0c1017] text-[#cbd5e1] whitespace-pre-wrap"
                 }`}
               >
                 <div className="flex items-center justify-between text-[10px] font-mono-code text-[#64748b] mb-1.5">
                   <span className="font-semibold uppercase">
-                    {msg.sender === "user" ? "You" : "ORATOR AI Coach"}
+                    {msg.sender === "user" ? "You" : "Oratio AI Coach"}
                   </span>
                   <span>{msg.timestamp}</span>
                 </div>
@@ -174,7 +174,7 @@ Ask me about your pacing volatility, transition quality, timestamped flaw cluste
               </div>
 
               {msg.sender === "user" && (
-                <div className="w-8 h-8 rounded bg-[#182030] border border-[#232c40] flex items-center justify-center text-[#f1f5f9] shrink-0">
+                <div className="w-8 h-8 rounded-full bg-[#182030] flex items-center justify-center text-[#f1f5f9] shrink-0 shadow-sm">
                   <User className="w-4 h-4" />
                 </div>
               )}
@@ -183,10 +183,10 @@ Ask me about your pacing volatility, transition quality, timestamped flaw cluste
 
           {isLoading && (
             <div className="flex gap-3 justify-start">
-              <div className="w-8 h-8 rounded bg-[#f59e0b]/10 border border-[#f59e0b]/30 flex items-center justify-center text-[#f59e0b] shrink-0">
+              <div className="w-8 h-8 rounded-full bg-[#f59e0b]/15 flex items-center justify-center text-[#f59e0b] shrink-0">
                 <Loader2 className="w-4 h-4 animate-spin" />
               </div>
-              <div className="p-3.5 rounded bg-[#0c1017] border border-[#1e2638] text-xs font-mono-code text-[#94a3b8] flex items-center gap-2">
+              <div className="p-4 rounded-2xl bg-[#0c1017] text-xs font-mono-code text-[#94a3b8] flex items-center gap-2 shadow-sm">
                 <span>Analyzing speech evidence and temporal flaw vectors...</span>
               </div>
             </div>
@@ -194,7 +194,7 @@ Ask me about your pacing volatility, transition quality, timestamped flaw cluste
         </div>
 
         {/* Input Bar */}
-        <div className="p-4 border-t border-[#1e2638] bg-[#0c1017] flex items-center gap-3">
+        <div className="p-4 border-t border-[#182030] bg-[#0c1017] flex items-center gap-3">
           <input
             type="text"
             value={inputQuery}
@@ -202,14 +202,14 @@ Ask me about your pacing volatility, transition quality, timestamped flaw cluste
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSend();
             }}
-            placeholder="Ask the AI Coach a diagnostic question about your speech..."
-            className="flex-1 px-3 py-2 text-xs rounded bg-[#101520] border border-[#1e2638] text-[#f1f5f9] focus:outline-none focus:border-[#f59e0b]"
+            placeholder="Ask the AI Coach a diagnostic question about your voice delivery..."
+            className="flex-1 px-4 py-2.5 text-xs rounded-xl bg-[#101520] text-[#f1f5f9] focus:outline-none focus:ring-1 focus:ring-[#f59e0b]"
           />
 
           <button
             onClick={() => handleSend()}
             disabled={isLoading || !inputQuery.trim()}
-            className="px-4 py-2 rounded bg-[#f59e0b] text-[#0a0d13] text-xs font-bold hover:bg-[#d97706] disabled:opacity-50 transition-colors flex items-center gap-1.5"
+            className="px-5 py-2.5 rounded-xl bg-[#f59e0b] text-[#0a0d13] text-xs font-bold hover:bg-[#d97706] disabled:opacity-50 transition-colors flex items-center gap-1.5 shadow-md shadow-[#f59e0b]/20 cursor-pointer"
           >
             <span>Send</span>
             <Send className="w-3.5 h-3.5" />

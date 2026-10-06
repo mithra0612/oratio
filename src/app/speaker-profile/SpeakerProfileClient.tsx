@@ -132,7 +132,7 @@ export function SpeakerProfileClient({ speakers }: SpeakerProfileClientProps) {
         <div className="p-3.5 rounded bg-[#101520] border border-[#1e2638]">
           <span className="text-[9px] text-[#64748b] uppercase block">Avg Pause</span>
           <span className="text-lg font-bold text-[#f1f5f9] mt-1 block">
-            {currentSpeaker.averagePauseDuration}s
+            {currentSpeaker.averagePauseDuration ?? currentSpeaker.baselinePauseDuration}s
           </span>
         </div>
 

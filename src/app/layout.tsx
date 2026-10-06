@@ -4,9 +4,9 @@ import { Navigation } from "@/components/Navigation";
 import { Topbar } from "@/components/Topbar";
 
 export const metadata: Metadata = {
-  title: "ORATOR - Multimodal Speech Intelligence & Temporal Evaluation Platform",
+  title: "Oratio - Voice Note Intelligence & Delivery Coach",
   description:
-    "Analytical speech intelligence workstation featuring contrastive speech evaluation, temporal flaw grounding, and reproducible rubric-based scoring.",
+    "Analyze your voice notes with live recording or audio upload, actionable pacing (WPM), filler density, and temporal flaw telemetry.",
 };
 
 export default function RootLayout({
